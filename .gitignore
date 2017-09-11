@@ -1,0 +1,13 @@
+# IntelliJ IDEA files
+.idea/
+
+# Dependencies
+node_modules/
+
+# Build
+build/
+public/*
+!public/index.html
+
+# macOS files
+.DS_Store
