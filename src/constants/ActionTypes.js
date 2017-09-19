@@ -1,1 +1,1 @@
-export const CLICK_BUTTON = 'CLICK_BUTTON';
+export const RUBIK_ROTATE = 'RUBIK_ROTATE';
