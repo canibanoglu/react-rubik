@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import RubikActionCreators from '../actions/RubikActionCreators';
+import Rubik from './Rubik';
 
 import {
   ROTATION_F,
@@ -40,8 +41,6 @@ class Home extends React.Component {
   }
 
   render() {
-    const { front, top, left, right, bottom, back } = this.props.cube;
-
     return (
       <div>
         { this.rotateButton(ROTATION_F) }
@@ -51,28 +50,7 @@ class Home extends React.Component {
         { this.rotateButton(ROTATION_B) }
         { this.rotateButton(ROTATION_D) }
         <div style={{ width: '100%', height: '1px', background: 'black', margin: '10px 0' }} />
-        <table style={{ width: '100%' }}>
-          <tr>
-            <td />
-            { tableCell('Top', top) }
-            <td />
-          </tr>
-          <tr>
-            { tableCell('Left', left) }
-            { tableCell('Front', front) }
-            { tableCell('Right', right) }
-          </tr>
-          <tr>
-            <td />
-            { tableCell('Bottom', bottom) }
-            <td />
-          </tr>
-          <tr>
-            <td />
-            { tableCell('Back', back) }
-            <td />
-          </tr>
-        </table>
+        <Rubik width={window.innerWidth} height={window.innerHeight} />
       </div>
     );
   }
