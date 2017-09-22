@@ -14,17 +14,6 @@ import {
   ROTATION_D,
 } from '../constants/Rubik';
 
-const tableCell = (label, face) => (
-  <td>
-    <h5>{ label }</h5>
-    <div>
-      <div>{ `${face[0][0]} ${face[0][1]} ${face[0][2]}` }</div>
-      <div>{ `${face[1][0]} ${face[1][1]} ${face[1][2]}` }</div>
-      <div>{ `${face[2][0]} ${face[2][1]} ${face[2][2]}` }</div>
-    </div>
-  </td>
-);
-
 class Home extends React.Component {
   rotateButton(rotation) {
     const { cube, rotate } = this.props;
@@ -49,7 +38,6 @@ class Home extends React.Component {
         { this.rotateButton(ROTATION_L) }
         { this.rotateButton(ROTATION_B) }
         { this.rotateButton(ROTATION_D) }
-        <div style={{ width: '100%', height: '1px', background: 'black', margin: '10px 0' }} />
         <Rubik width={window.innerWidth} height={window.innerHeight} />
       </div>
     );

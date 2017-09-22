@@ -35,9 +35,7 @@ class MouseInput extends Module {
     this._active = true;
     this._restrictIntersections = false;
     this._objectsToIntersect = null;
-
     this._restrictedIntersectionRecursive = false;
-
     this._patchedDescriptors = [];
   }
 
