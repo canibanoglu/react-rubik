@@ -9,7 +9,7 @@ import {
   GREEN,
   RED,
   ORANGE,
-} from '../constants/Colors';
+} from '../constants/Rubik';
 
 const initialState = {
   cube: {
@@ -50,13 +50,7 @@ const rubik = (state = initialState, action = {}) => {
   switch (action.type) {
     case RUBIK_ROTATE: {
       return {
-        ...state,
-        front: action.front,
-        top: action.top,
-        left: action.left,
-        right: action.right,
-        bottom: action.bottom,
-        back: action.back,
+        cube: action.cube,
       };
     }
 

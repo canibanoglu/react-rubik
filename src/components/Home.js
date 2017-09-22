@@ -4,6 +4,15 @@ import PropTypes from 'prop-types';
 
 import RubikActionCreators from '../actions/RubikActionCreators';
 
+import {
+  ROTATION_F,
+  ROTATION_R,
+  ROTATION_U,
+  ROTATION_L,
+  ROTATION_B,
+  ROTATION_D,
+} from '../constants/Rubik';
+
 const tableCell = (label, face) => (
   <td>
     <h5>{ label }</h5>
@@ -35,12 +44,12 @@ class Home extends React.Component {
 
     return (
       <div>
-        { this.rotateButton('F') }
-        { this.rotateButton('R') }
-        { this.rotateButton('U') }
-        { this.rotateButton('L') }
-        { this.rotateButton('B') }
-        { this.rotateButton('D') }
+        { this.rotateButton(ROTATION_F) }
+        { this.rotateButton(ROTATION_R) }
+        { this.rotateButton(ROTATION_U) }
+        { this.rotateButton(ROTATION_L) }
+        { this.rotateButton(ROTATION_B) }
+        { this.rotateButton(ROTATION_D) }
         <div style={{ width: '100%', height: '1px', background: 'black', margin: '10px 0' }} />
         <table style={{ width: '100%' }}>
           <tr>
@@ -81,11 +90,9 @@ Home.propTypes = {
   rotate: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    cube: state.rubik.cube,
-  };
-};
+const mapStateToProps = state => ({
+  cube: state.rubik.cube,
+});
 
 const mapDispatchToProps = dispatch => ({
   rotate(cube, rotation) {
