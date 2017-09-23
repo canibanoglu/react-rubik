@@ -7,14 +7,14 @@ import { Provider } from 'react-redux';
 import './assets/styles/styles.scss';
 import store from './store/store';
 import Home from './components/Home';
-import Rubik from './components/Rubik';
+import Scan from './components/Scan';
 
 ReactDOM.render((
   <Provider store={store}>
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route exact path="/rubik" render={()=><Rubik width={window.innerWidth} height={window.innerHeight} />}/>
+        <Route exact path="/scan" component={Scan} />
       </Switch>
     </BrowserRouter>
   </Provider>
