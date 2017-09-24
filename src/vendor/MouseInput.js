@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React3 from 'react-three-renderer';
 import * as THREE from 'three';
 import ReactUpdates from 'react-dom/lib/ReactUpdates';

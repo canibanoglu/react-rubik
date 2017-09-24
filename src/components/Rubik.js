@@ -4,10 +4,11 @@ import * as THREE from 'three';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import RubikBlock from './RubikBlock';
-
 import TrackballControls from '../vendor/Trackball';
 import MouseInput from '../vendor/MouseInput';
+import RubikBlock from './RubikBlock';
+
+const BLOCK_SIZE = 0.5;
 
 class Rubik extends React.Component {
   constructor(props, context) {
@@ -17,28 +18,11 @@ class Rubik extends React.Component {
       cameraPosition: new THREE.Vector3(0, 0, 5),
       cameraRotation: new THREE.Euler(),
       mouseInput: null,
-      hovering: false,
-      dragging: false,
-    };
-
-    this._cursor = {
-      hovering: false,
-      dragging: false,
-    };
-
-    this.blockSize = 0.5;
-
-    this._onAnimate = () => {
-      this._onAnimateInternal();
     };
   }
 
   componentDidMount() {
-
-    const {
-      camera,
-    } = this.refs;
-
+    const { camera } = this.refs;
     const controls = new TrackballControls(camera);
 
     controls.rotateSpeed = 1.0;
@@ -50,195 +34,279 @@ class Rubik extends React.Component {
     controls.dynamicDampingFactor = 0.3;
 
     this.controls = controls;
-
-    this.controls.addEventListener('change', this._onTrackballChange);
+    this.controls.addEventListener('change', this.onTrackballChange);
   }
 
-  _onHoverStart = () => {
-    this.setState({
-      hovering: true,
-    });
-  };
-
-  _onHoverEnd = () => {
-    this.setState({
-      hovering: false,
-    });
-  };
-
-  _onDragStart = () => {
-    this.setState({
-      dragging: true,
-    });
-  };
-
-  _onDragEnd = () => {
-    this.setState({
-      dragging: false,
-    });
-  };
-
-  componentDidUpdate(newProps) {
-    const {
-      mouseInput,
-    } = this.refs;
-
-    const {
-      width,
-      height,
-    } = this.props;
-
-    if (width !== newProps.width || height !== newProps.height) {
-      mouseInput.containerResized();
-    }
+  componentDidUpdate() {
+    const { mouseInput } = this.refs;
+    mouseInput.containerResized();
   }
 
-  _onTrackballChange = () => {
+  componentWillUnmount() {
+    this.controls.removeEventListener('change', this.onTrackballChange);
+    this.controls.dispose();
+    delete this.controls;
+  }
+
+  onTrackballChange = () => {
     this.setState({
       cameraPosition: this.refs.camera.position.clone(),
       cameraRotation: this.refs.camera.rotation.clone(),
     });
   };
 
-  componentWillUnmount() {
-    this.controls.removeEventListener('change', this._onTrackballChange);
-
-    this.controls.dispose();
-    delete this.controls;
-  }
-
-  _onAnimateInternal() {
-    const {
-      mouseInput,
-      camera,
-    } = this.refs;
+  onAnimate() {
+    const { mouseInput, camera } = this.refs;
 
     if (!mouseInput.isReady()) {
-      const {
-        scene,
-        container,
-      } = this.refs;
-
+      const { scene, container } = this.refs;
       mouseInput.ready(scene, container, camera);
-      mouseInput.restrictIntersections(this.cubes);
+      mouseInput.restrictIntersections();
       mouseInput.setActive(false);
     }
 
     if (this.state.mouseInput !== mouseInput) {
-      this.setState({
-        mouseInput,
-      });
+      this.setState({ mouseInput });
     }
 
     if (this.state.camera !== camera) {
-      this.setState({
-        camera,
-      });
+      this.setState({ camera });
     }
 
     this.controls.update();
   }
 
   render() {
-    const {
-      width,
-      height,
-    } = this.props;
-
-    const {
-      cameraPosition,
-      cameraRotation,
-      hovering,
-      dragging,
-    } = this.state;
-
-    const style = {};
-
-    if (dragging) {
-      style.cursor = 'move';
-    } else if (hovering) {
-      style.cursor = 'pointer';
-    }
-
-    this._cursor.hovering = hovering;
-    this._cursor.dragging = dragging;
+    const { cube } = this.props;
+    const { cameraPosition, cameraRotation } = this.state;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
     return (
       <div ref="container" >
         <React3
-        mainCamera="camera" // this points to the perspectiveCamera which has the name set to "camera" below
-        width={width}
-        height={height}
-        clearColor="#B0BEC5"
+          mainCamera="camera"
+          width={width}
+          height={height}
+          clearColor="#B0BEC5"
+          onAnimate={() => this.onAnimate()}
+        >
+          <module ref="mouseInput" descriptor={MouseInput} />
+          <scene>
+            <perspectiveCamera
+              name="camera"
+              fov={75}
+              aspect={width / height}
+              near={0.1}
+              far={1000}
+              ref="camera"
+              position={cameraPosition}
+              rotation={cameraRotation}
+            />
+            <hemisphereLight />
+            <axisHelper size={2} />
+            <group>
+              <RubikBlock // Front Row 1
+                position={{ x: -BLOCK_SIZE, y: BLOCK_SIZE, z: BLOCK_SIZE }}
+                color={{
+                  front: cube.front[0][0],
+                  left: cube.left[0][2],
+                  top: cube.top[2][0],
+                }}
+              />
+              <RubikBlock
+                position={{ x: 0, y: BLOCK_SIZE, z: BLOCK_SIZE }}
+                color={{
+                  front: cube.front[0][1],
+                  top: cube.top[2][1],
+                }}
+              />
+              <RubikBlock
+                position={{ x: BLOCK_SIZE, y: BLOCK_SIZE, z: BLOCK_SIZE }}
+                color={{
+                  front: cube.front[0][2],
+                  right: cube.right[0][0],
+                  top: cube.top[2][2],
+                }}
+              />
 
-        onAnimate={this._onAnimate}
-      >
-        <module
-          ref="mouseInput"
-          descriptor={MouseInput}
-        />
-        <scene>
-          <perspectiveCamera
-            name="camera"
-            fov={75}
-            aspect={width / height}
-            near={0.1}
-            far={1000}
-            ref="camera"
-            position={cameraPosition}
-            rotation={cameraRotation}
-          >
-          </perspectiveCamera>
-          <hemisphereLight />
-          <axisHelper
-            size={2}
-          />
-          <group>
-            {/*Front*/}
-            {/*Row 1*/}
-            <RubikBlock position={new THREE.Vector3(-(this.blockSize), (this.blockSize), (this.blockSize))} color={{front: this.props.cube.front[0][0], left: this.props.cube.left[0][2], top: this.props.cube.top[2][0]}}/>
-            <RubikBlock position={new THREE.Vector3( 0               , (this.blockSize), (this.blockSize))} color={{front: this.props.cube.front[0][1], top: this.props.cube.top[2][1]}}/>
-            <RubikBlock position={new THREE.Vector3( (this.blockSize), (this.blockSize), (this.blockSize))} color={{front: this.props.cube.front[0][2], right: this.props.cube.right[0][0], top: this.props.cube.top[2][2]}}/>
-            {/*Row 2*/}
-            <RubikBlock position={new THREE.Vector3(-(this.blockSize), 0               , (this.blockSize))} color={{front: this.props.cube.front[1][0], left: this.props.cube.left[1][2]}}/>
-            <RubikBlock position={new THREE.Vector3( 0               , 0               , (this.blockSize))} color={{front: this.props.cube.front[1][1]}}/>
-            <RubikBlock position={new THREE.Vector3( (this.blockSize), 0               , (this.blockSize))} color={{front: this.props.cube.front[1][2], right: this.props.cube.right[1][0]}}/>
-            {/*Row 3*/}
-            <RubikBlock position={new THREE.Vector3(-(this.blockSize),-(this.blockSize), (this.blockSize))} color={{front: this.props.cube.front[2][0], left: this.props.cube.left[2][2], bottom: this.props.cube.bottom[0][0]}}/>
-            <RubikBlock position={new THREE.Vector3( 0               ,-(this.blockSize), (this.blockSize))} color={{front: this.props.cube.front[2][1], bottom: this.props.cube.bottom[0][1]}}/>
-            <RubikBlock position={new THREE.Vector3( (this.blockSize),-(this.blockSize), (this.blockSize))} color={{front: this.props.cube.front[2][2], right: this.props.cube.right[2][0], bottom: this.props.cube.bottom[0][2]}}/>
+              <RubikBlock // Front Row 2
+                position={{ x: -BLOCK_SIZE, y: 0, z: BLOCK_SIZE }}
+                color={{
+                  front: cube.front[1][0],
+                  left: cube.left[1][2],
+                }}
+              />
+              <RubikBlock
+                position={{ x: 0, y: 0, z: BLOCK_SIZE }}
+                color={{
+                  front: cube.front[1][1],
+                }}
+              />
+              <RubikBlock
+                position={{ x: BLOCK_SIZE, y: 0, z: BLOCK_SIZE }}
+                color={{
+                  front: cube.front[1][2],
+                  right: cube.right[1][0],
+                }}
+              />
 
-            {/*Middle*/}
-            {/*Row 1*/}
-            <RubikBlock position={new THREE.Vector3(-(this.blockSize), (this.blockSize), 0               )} color={{left: this.props.cube.left[0][1], top: this.props.cube.top[1][0]}}/>
-            <RubikBlock position={new THREE.Vector3( 0               , (this.blockSize), 0               )} color={{top: this.props.cube.top[1][1]}}/>
-            <RubikBlock position={new THREE.Vector3( (this.blockSize), (this.blockSize), 0               )} color={{right: this.props.cube.right[0][1], top: this.props.cube.top[1][2]}}/>
-            {/*Row 2*/}
-            <RubikBlock position={new THREE.Vector3(-(this.blockSize), 0               , 0               )} color={{left: this.props.cube.left[1][1]}}/>
-            <RubikBlock position={new THREE.Vector3( 0               , 0               , 0               )}/>
-            <RubikBlock position={new THREE.Vector3( (this.blockSize), 0               , 0               )} color={{right: this.props.cube.right[1][1]}}/>
-            {/*Row 3*/}
-            <RubikBlock position={new THREE.Vector3(-(this.blockSize),-(this.blockSize), 0               )} color={{left: this.props.cube.left[2][1], bottom: this.props.cube.bottom[1][0]}}/>
-            <RubikBlock position={new THREE.Vector3( 0               ,-(this.blockSize), 0               )} color={{bottom: this.props.cube.bottom[1][1]}}/>
-            <RubikBlock position={new THREE.Vector3( (this.blockSize),-(this.blockSize), 0               )} color={{right: this.props.cube.right[2][1], bottom: this.props.cube.bottom[1][2]}}/>
+              <RubikBlock // Front Row 3
+                position={{ x: -BLOCK_SIZE, y: -BLOCK_SIZE, z: BLOCK_SIZE }}
+                color={{
+                  front: cube.front[2][0],
+                  left: cube.left[2][2],
+                  bottom: cube.bottom[0][0],
+                }}
+              />
+              <RubikBlock
+                position={{ x: 0, y: -BLOCK_SIZE, z: BLOCK_SIZE }}
+                color={{
+                  front: cube.front[2][1],
+                  bottom: cube.bottom[0][1],
+                }}
+              />
+              <RubikBlock
+                position={{ x: BLOCK_SIZE, y: -BLOCK_SIZE, z: BLOCK_SIZE }}
+                color={{
+                  front: cube.front[2][2],
+                  right: cube.right[2][0],
+                  bottom: cube.bottom[0][2],
+                }}
+              />
 
-            {/*Back*/}
-            {/*Row 1*/}
-            <RubikBlock position={new THREE.Vector3(-(this.blockSize), (this.blockSize),-(this.blockSize))} color={{back: this.props.cube.back[2][0], left: this.props.cube.left[0][0], top: this.props.cube.top[0][0]}}/>
-            <RubikBlock position={new THREE.Vector3( 0               , (this.blockSize),-(this.blockSize))} color={{back: this.props.cube.back[2][1], top: this.props.cube.top[0][1]}}/>
-            <RubikBlock position={new THREE.Vector3( (this.blockSize), (this.blockSize),-(this.blockSize))} color={{back: this.props.cube.back[2][2], right: this.props.cube.right[0][2], top: this.props.cube.top[0][2]}}/>
-            {/*Row 2*/}
-            <RubikBlock position={new THREE.Vector3(-(this.blockSize), 0               ,-(this.blockSize))} color={{back: this.props.cube.back[1][0], left: this.props.cube.left[1][0]}}/>
-            <RubikBlock position={new THREE.Vector3( 0               , 0               ,-(this.blockSize))} color={{back: this.props.cube.back[1][1]}}/>
-            <RubikBlock position={new THREE.Vector3( (this.blockSize), 0               ,-(this.blockSize))} color={{back: this.props.cube.back[1][2], right: this.props.cube.right[1][2]}}/>
-            {/*Row 3*/}
-            <RubikBlock position={new THREE.Vector3(-(this.blockSize),-(this.blockSize),-(this.blockSize))} color={{back: this.props.cube.back[0][0], left: this.props.cube.left[2][0], bottom: this.props.cube.bottom[2][0]}}/>
-            <RubikBlock position={new THREE.Vector3( 0               ,-(this.blockSize),-(this.blockSize))} color={{back: this.props.cube.back[0][1], bottom: this.props.cube.bottom[2][1]}}/>
-            <RubikBlock position={new THREE.Vector3( (this.blockSize),-(this.blockSize),-(this.blockSize))} color={{back: this.props.cube.back[0][2], right: this.props.cube.right[2][2], bottom: this.props.cube.bottom[2][2]}}/>
-          </group>
-        </scene>
-      </React3>
-    </div>);
+              <RubikBlock // Middle Row 1
+                position={{ x: -BLOCK_SIZE, y: BLOCK_SIZE, z: 0 }}
+                color={{
+                  left: cube.left[0][1],
+                  top: cube.top[1][0],
+                }}
+              />
+              <RubikBlock
+                position={{ x: 0, y: BLOCK_SIZE, z: 0 }}
+                color={{
+                  top: cube.top[1][1],
+                }}
+              />
+              <RubikBlock
+                position={{ x: BLOCK_SIZE, y: BLOCK_SIZE, z: 0 }}
+                color={{
+                  right: cube.right[0][1],
+                  top: cube.top[1][2],
+                }}
+              />
+
+              <RubikBlock // Middle Row 2
+                position={{ x: -BLOCK_SIZE, y: 0, z: 0 }}
+                color={{
+                  left: cube.left[1][1],
+                }}
+              />
+              <RubikBlock
+                position={{ x: 0, y: 0, z: 0 }}
+                color={{}}
+              />
+              <RubikBlock
+                position={{ x: BLOCK_SIZE, y: 0, z: 0 }}
+                color={{
+                  right: cube.right[1][1],
+                }}
+              />
+
+              <RubikBlock // Middle Row 3
+                position={{ x: -BLOCK_SIZE, y: -BLOCK_SIZE, z: 0 }}
+                color={{
+                  left: cube.left[2][1],
+                  bottom: cube.bottom[1][0],
+                }}
+              />
+              <RubikBlock
+                position={{ x: 0, y: -BLOCK_SIZE, z: 0 }}
+                color={{
+                  bottom: cube.bottom[1][1],
+                }}
+              />
+              <RubikBlock
+                position={{ x: BLOCK_SIZE, y: -BLOCK_SIZE, z: 0 }}
+                color={{
+                  right: cube.right[2][1],
+                  bottom: cube.bottom[1][2],
+                }}
+              />
+
+              <RubikBlock // Back Row 1
+                position={{ x: -BLOCK_SIZE, y: BLOCK_SIZE, z: -BLOCK_SIZE }}
+                color={{
+                  back: cube.back[2][0],
+                  left: cube.left[0][0],
+                  top: cube.top[0][0],
+                }}
+              />
+              <RubikBlock
+                position={{ x: 0, y: BLOCK_SIZE, z: -BLOCK_SIZE }}
+                color={{
+                  back: cube.back[2][1],
+                  top: cube.top[0][1],
+                }}
+              />
+              <RubikBlock
+                position={{ x: BLOCK_SIZE, y: BLOCK_SIZE, z: -BLOCK_SIZE }}
+                color={{
+                  back: cube.back[2][2],
+                  right: cube.right[0][2],
+                  top: cube.top[0][2],
+                }}
+              />
+
+              <RubikBlock // Back Row 2
+                position={{ x: -BLOCK_SIZE, y: 0, z: -BLOCK_SIZE }}
+                color={{
+                  back: cube.back[1][0],
+                  left: cube.left[1][0],
+                }}
+              />
+              <RubikBlock
+                position={{ x: 0, y: 0, z: -BLOCK_SIZE }}
+                color={{
+                  back: cube.back[1][1],
+                }}
+              />
+              <RubikBlock
+                position={{ x: BLOCK_SIZE, y: 0, z: -BLOCK_SIZE }}
+                color={{
+                  back: cube.back[1][2],
+                  right: cube.right[1][2],
+                }}
+              />
+
+              <RubikBlock // Back Row 3
+                position={{ x: -BLOCK_SIZE, y: -BLOCK_SIZE, z: -BLOCK_SIZE }}
+                color={{
+                  back: cube.back[0][0],
+                  left: cube.left[2][0],
+                  bottom: cube.bottom[2][0],
+                }}
+              />
+              <RubikBlock
+                position={{ x: 0, y: -BLOCK_SIZE, z: -BLOCK_SIZE }}
+                color={{
+                  back: cube.back[0][1],
+                  bottom: cube.bottom[2][1],
+                }}
+              />
+              <RubikBlock
+                position={{ x: BLOCK_SIZE, y: -BLOCK_SIZE, z: -BLOCK_SIZE }}
+                color={{
+                  back: cube.back[0][2],
+                  right: cube.right[2][2],
+                  bottom: cube.bottom[2][2],
+                }}
+              />
+            </group>
+          </scene>
+        </React3>
+      </div>
+    );
   }
 }
 

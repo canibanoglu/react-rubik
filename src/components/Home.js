@@ -38,13 +38,14 @@ class Home extends React.Component {
         { this.rotateButton(ROTATION_L) }
         { this.rotateButton(ROTATION_B) }
         { this.rotateButton(ROTATION_D) }
-        <Rubik width={window.innerWidth} height={window.innerHeight} />
+        <Rubik />
       </div>
     );
   }
 }
 
 Home.propTypes = {
+  rotate: PropTypes.func.isRequired,
   cube: PropTypes.shape({
     front: PropTypes.array.isRequired,
     top: PropTypes.array.isRequired,
@@ -53,7 +54,6 @@ Home.propTypes = {
     bottom: PropTypes.array.isRequired,
     back: PropTypes.array.isRequired,
   }).isRequired,
-  rotate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
