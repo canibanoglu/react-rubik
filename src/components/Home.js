@@ -12,6 +12,18 @@ import {
   ROTATION_L,
   ROTATION_B,
   ROTATION_D,
+  ROTATION_F_PRIME,
+  ROTATION_R_PRIME,
+  ROTATION_U_PRIME,
+  ROTATION_L_PRIME,
+  ROTATION_B_PRIME,
+  ROTATION_D_PRIME,
+  ROTATION_F2,
+  ROTATION_R2,
+  ROTATION_U2,
+  ROTATION_L2,
+  ROTATION_B2,
+  ROTATION_D2,
 } from '../constants/Rubik';
 
 class Home extends React.Component {
@@ -38,6 +50,20 @@ class Home extends React.Component {
         { this.rotateButton(ROTATION_L) }
         { this.rotateButton(ROTATION_B) }
         { this.rotateButton(ROTATION_D) }
+        <div style={{ display: 'inline-block', width: '40px' }} />
+        { this.rotateButton(ROTATION_F_PRIME) }
+        { this.rotateButton(ROTATION_R_PRIME) }
+        { this.rotateButton(ROTATION_U_PRIME) }
+        { this.rotateButton(ROTATION_L_PRIME) }
+        { this.rotateButton(ROTATION_B_PRIME) }
+        { this.rotateButton(ROTATION_D_PRIME) }
+        <div style={{ display: 'inline-block', width: '40px' }} />
+        { this.rotateButton(ROTATION_F2) }
+        { this.rotateButton(ROTATION_R2) }
+        { this.rotateButton(ROTATION_U2) }
+        { this.rotateButton(ROTATION_L2) }
+        { this.rotateButton(ROTATION_B2) }
+        { this.rotateButton(ROTATION_D2) }
         <Rubik />
       </div>
     );
