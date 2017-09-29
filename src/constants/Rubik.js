@@ -25,3 +25,11 @@ export const ROTATION_U2 = 'U2';
 export const ROTATION_L2 = 'L2';
 export const ROTATION_B2 = 'B2';
 export const ROTATION_D2 = 'D2';
+
+// Rubik Faces
+export const FACE_FRONT = 'f';
+export const FACE_RIGHT = 'r';
+export const FACE_UP = 'u';
+export const FACE_LEFT = 'l';
+export const FACE_BACK = 'b';
+export const FACE_DOWN = 'd';
