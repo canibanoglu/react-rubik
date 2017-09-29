@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import TrackballControls from '../vendor/Trackball';
-import MouseInput from '../vendor/MouseInput';
 import RubikBlock from './RubikBlock';
 
 const CLEAR_COLOR = '#34495E';
@@ -18,7 +17,6 @@ class Rubik extends React.Component {
     this.state = {
       cameraPosition: new THREE.Vector3(0, 0, 5),
       cameraRotation: new THREE.Euler(),
-      mouseInput: null,
     };
   }
 
@@ -38,11 +36,6 @@ class Rubik extends React.Component {
     this.controls.addEventListener('change', this.onTrackballChange);
   }
 
-  componentDidUpdate() {
-    const { mouseInput } = this.refs;
-    mouseInput.containerResized();
-  }
-
   componentWillUnmount() {
     this.controls.removeEventListener('change', this.onTrackballChange);
     this.controls.dispose();
@@ -57,23 +50,10 @@ class Rubik extends React.Component {
   };
 
   onAnimate() {
-    const { mouseInput, camera } = this.refs;
-
-    if (!mouseInput.isReady()) {
-      const { scene, container } = this.refs;
-      mouseInput.ready(scene, container, camera);
-      mouseInput.restrictIntersections();
-      mouseInput.setActive(false);
-    }
-
-    if (this.state.mouseInput !== mouseInput) {
-      this.setState({ mouseInput });
-    }
-
+    const { camera } = this.refs;
     if (this.state.camera !== camera) {
       this.setState({ camera });
     }
-
     this.controls.update();
   }
 
@@ -93,7 +73,6 @@ class Rubik extends React.Component {
           antialias
           onAnimate={() => this.onAnimate()}
         >
-          <module ref="mouseInput" descriptor={MouseInput} />
           <scene>
             <perspectiveCamera
               name="camera"
@@ -106,7 +85,6 @@ class Rubik extends React.Component {
               rotation={cameraRotation}
             />
             <hemisphereLight />
-            <axisHelper size={2} />
             <group>
               <RubikBlock // Front Row 1
                 position={{ x: -BLOCK_SIZE, y: BLOCK_SIZE, z: BLOCK_SIZE }}
