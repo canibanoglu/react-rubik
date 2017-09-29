@@ -1,5 +1,6 @@
 import {
   RUBIK_ROTATE,
+  RUBIK_SOLVE,
 } from '../constants/ActionTypes';
 
 import {
@@ -186,6 +187,12 @@ const RubikActionCreators = {
       type: RUBIK_ROTATE,
       cube: newCube,
       rotation,
+    };
+  },
+  solve(cube) {
+    return {
+      type: RUBIK_SOLVE,
+      steps: '',
     };
   },
 };

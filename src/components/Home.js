@@ -42,6 +42,7 @@ class Home extends React.Component {
   }
 
   render() {
+    const { cube, solve } = this.props;
     return (
       <div>
         { this.rotateButton(ROTATION_F) }
@@ -64,6 +65,14 @@ class Home extends React.Component {
         { this.rotateButton(ROTATION_L2) }
         { this.rotateButton(ROTATION_B2) }
         { this.rotateButton(ROTATION_D2) }
+        <div style={{ display: 'inline-block', width: '40px' }} />
+        <button
+          onClick={() => solve(cube)}
+          type="button"
+          className="btn btn-default"
+        >
+          Solve
+        </button>
         <Rubik />
       </div>
     );
@@ -72,6 +81,7 @@ class Home extends React.Component {
 
 Home.propTypes = {
   rotate: PropTypes.func.isRequired,
+  solve: PropTypes.func.isRequired,
   cube: PropTypes.shape({
     front: PropTypes.array.isRequired,
     top: PropTypes.array.isRequired,
@@ -89,6 +99,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   rotate(cube, rotation) {
     dispatch(RubikActionCreators.rotate(cube, rotation));
+  },
+  solve(cube) {
+    dispatch(RubikActionCreators.solve(cube));
   },
 });
 
