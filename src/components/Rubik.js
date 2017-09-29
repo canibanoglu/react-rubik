@@ -8,6 +8,7 @@ import TrackballControls from '../vendor/Trackball';
 import MouseInput from '../vendor/MouseInput';
 import RubikBlock from './RubikBlock';
 
+const CLEAR_COLOR = '#34495E';
 const BLOCK_SIZE = 0.5;
 
 class Rubik extends React.Component {
@@ -88,7 +89,8 @@ class Rubik extends React.Component {
           mainCamera="camera"
           width={width}
           height={height}
-          clearColor="#B0BEC5"
+          clearColor={CLEAR_COLOR}
+          antialias
           onAnimate={() => this.onAnimate()}
         >
           <module ref="mouseInput" descriptor={MouseInput} />

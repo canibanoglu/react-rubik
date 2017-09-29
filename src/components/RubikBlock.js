@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import RubikMesh from './RubikMesh';
 
 const DEFAULT_COLOR = '#FF69B4';
-const FILL_COLOR = '#ECEFF1';
+const FILL_COLOR = '#ECF0F1';
 const OFFSET = 0.25;
 
 export default class RubikBlock extends React.Component {

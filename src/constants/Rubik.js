@@ -1,10 +1,10 @@
 // Rubik Colors
 export const BLACK = '#212121';
-export const BLUE = '#64B5F6';
-export const YELLOW = '#FFF176';
-export const GREEN = '#AED581';
-export const RED = '#F44336';
-export const ORANGE = '#FFB74D';
+export const BLUE = '#3498DB';
+export const YELLOW = '#F1C40F';
+export const GREEN = '#2ECC71';
+export const RED = '#E74C3C';
+export const ORANGE = '#E67E22';
 
 // Rubik Rotations
 export const ROTATION_F = 'F';
