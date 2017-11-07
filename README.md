@@ -1,4 +1,4 @@
-# SE 390
+# React Rubik
 
 ## Setup
 ### Dependencies
@@ -9,8 +9,8 @@ Install the following dependencies:
 ### Project
 Clone the project:
 ```
-git clone https://github.com/jfbisson4/se-390.git
-cd se-390
+git clone https://github.com/jfbisson4/react-rubik.git
+cd react-rubik
 ```
 Install the project's dependencies:
 ```
